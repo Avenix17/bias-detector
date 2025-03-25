@@ -7,6 +7,8 @@ import os
 os.system("pip install requests transformers")
 from textblob import TextBlob
 
+import requests
+import getpass
 
 # Class Bias
 class ClassBiased(ABC):
@@ -29,23 +31,23 @@ class ModerateBias(ClassBiased):
 class LowBias(ClassBiased):
     def determine_bias(self):
         print("This article seems to have a low bias")
-
+        
 class ExLowBias(ClassBiased):
     def determine_bias(self):
         print("This article seems to have an extremely low bias")
 
 class BiasFactory:
     @staticmethod
-    def determine_bias(Bias):
-        if Bias == "ExBias":
+    def determine_bias(bias):
+        if bias == "ExBias":
             return ExBias()
-        elif Bias == "HighBias":
+        elif bias == "HighBias":
             return HighBias()
-        elif Bias == "ModerateBias":
+        elif bias == "ModerateBias":
             return ModerateBias()
-        elif Bias == "LowBias":
+        elif bias == "LowBias":
             return LowBias()
-        elif Bias == "ExLowBias":
+        elif bias == "ExLowBias":
             return ExLowBias()
         else:
             return None
@@ -80,15 +82,38 @@ class PolarityFactory:
         else:
             return None
 
+# Class Fake News
+class FakeNews(ABC):
+    @abstractmethod
+    def determine_fake(self):
+        pass
+
+class Fake(FakeNews):
+    def determine_fake(self):
+        print("The API suspects this is Fake.")
+
+class Real(FakeNews):
+    def determine_fake(self):
+        print("This text is neutral.")
+
+class FakeNewsFactory:
+    @staticmethod
+    def determine_fake(prediction):
+        if prediction == "Fake News":
+            return Fake()
+        elif prediction == "Not Fake News":
+            return Real()
+        else:
+            return None
+
 # Class Ai-decision (API)
 
 API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
 
-headers = {"Authorization": f" "}
+key = input("Enter your Hugging Face API key: ")
 
 def detect_fake_news(text):
-    """Send input text to the Hugging Face model and get a prediction."""
-    response = requests.post(API_URL, headers=headers, json={"inputs": text})
+    response = requests.post(API_URL, headers=key, json={"inputs": text})
     
     if response.status_code == 200:
         result = response.json()
@@ -119,41 +144,39 @@ bias = blob.sentiment.subjectivity # Number for Subjectivity (Bias)
 
 polarity = blob.sentiment.polarity # Number for Polarity (+/-)
 
-# Method/class calls
+prediction = detect_fake_news(user_input) 
 
-# prediction = detect_fake_news(user_input) # Prediction (Fake News/Not Fake News) from AI
+# Method/class calls
 
 # if statements for bias/polarity/news
 # Bias
-if 0 < bias < .2:
-    bias = "ExLowBias"
-elif .2 < bias < .4:
-    bias = "LowBias"
-elif .4 < bias < .6:
-    bias = "ModerateBias"
-elif .6 < bias < .8:
-    bias = "HighBias"
-elif .8 < bias <= 1:
-    bias = "ExBias"
+if 0 <= bias < .2:
+    determined_bias = BiasFactory.determine_bias("ExLowBias")
+elif .2 <= bias < .4:
+    determined_bias = BiasFactory.determine_bias("LowBias")
+elif .4 <= bias < .6:
+    determined_bias = BiasFactory.determine_bias("ModerateBias")
+elif .6 <= bias < .8:
+    determined_bias = BiasFactory.determine_bias("HighBias")
+elif .8 <= bias <= 1:
+    determined_bias = BiasFactory.determine_bias("ExBias")
 
 # Polarity
-if -1 < polarity < -0.333:
-    polarity = "Negative"
-elif -0.333 < polarity < 0.333:
-    polarity = "Neutral"
-elif 0.333 < polarity < 1:
-    polarity = "Positive"
+if -1 <= polarity < -0.333:
+    determined_polarity = PolarityFactory.determine_polarity("Negative")
+elif -0.333 <= polarity < 0.333:
+    determined_polarity = PolarityFactory.determine_polarity("Neutral")
+elif 0.333 <= polarity <= 1:
+    determined_polarity = PolarityFactory.determine_polarity("Positive")
 
 # News
-# if prediction == 'Fake News':
-#     pass 
-# elif prediction == 'Not Fake News':
-#     pass
+if prediction == "Fake News":
+    determined_prediction = FakeNewsFactory.determine_fake("Fake")
+elif prediction == "Not Fake News":
+    determined_prediction = FakeNewsFactory.determine_fake("Real")
+elif:
+    None
 
-# order of operations:
-
-# Passing values into Superclass to determine subclasses
-determined_bias = BiasFactory.determine_bias(bias)
-determined_polarity = PolarityFactory.determine_polarity(polarity)
-
-print(determined_bias, determined_polarity)
+# Prints text related to bias and polarity given.
+determined_bias.determine_bias()
+determined_polarity.determine_polarity()
