@@ -9,6 +9,7 @@ from textblob import TextBlob
 
 import requests
 
+
 # Class Bias
 class ClassBiased(ABC):
     @abstractmethod
@@ -51,6 +52,7 @@ class BiasFactory:
         else:
             return None
 
+
 # Class Polarity
 class Polarity(ABC):
     @abstractmethod
@@ -81,22 +83,20 @@ class PolarityFactory:
         else:
             return None
 
+
 # Class Fake News
 class FakeNews(ABC):
    @abstractmethod
    def determine_fake(self):
        pass
 
-
 class Fake(FakeNews):
    def determine_fake(self):
        print("The API suspects this is Fake.")
 
-
 class Real(FakeNews):
    def determine_fake(self):
        print("The API suspects this is Real.")
-
 
 class FakeNewsFactory:
    @staticmethod
@@ -111,24 +111,19 @@ class FakeNewsFactory:
 
 # Class Ai-decision (API)
 
-
 API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
 api_key = input("Enter your Hugging Face API key: ")
-
 
 def detect_fake_news(text):
    headers = {"Authorization": f"Bearer {api_key}"}
    response = requests.post(API_URL, headers=headers, json={"inputs": text})
 
-
    if response.status_code == 200:
        result = response.json()
-
 
        if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
            prediction = result[0][0]
            label = prediction.get('label', 'Unknown').lower()  # Convert to lowercase
-
 
            if label == "fake":
                return "Fake News"
@@ -138,19 +133,14 @@ def detect_fake_news(text):
    else:
        return f"API Error: {response.status_code}"
 
-# Textblob
-user_input = input("Enter text: ")
-
-blob = TextBlob(user_input)
-blob.sentiment
-
-bias = blob.sentiment.subjectivity # Number for Subjectivity (Bias)
-
-polarity = blob.sentiment.polarity # Number for Polarity (+/-)
-
-prediction = detect_fake_news(user_input) 
 
 # Method/class calls
+user_input = input("Enter text: ")
+blob = TextBlob(user_input)
+blob.sentiment
+bias = blob.sentiment.subjectivity # Number for Subjectivity (Bias)
+polarity = blob.sentiment.polarity # Number for Polarity (+/-)
+prediction = detect_fake_news(user_input) 
 
 # if statements for bias/polarity/news
 # Bias
@@ -179,7 +169,7 @@ if prediction == "Fake News":
 elif prediction == "Not Fake News":
    determined_prediction = FakeNewsFactory.determine_fake("Not Fake News")
 
-# Prints text related to bias and polarity given.
+
 determined_bias.determine_bias()
 determined_polarity.determine_polarity()
 determined_prediction.determine_fake()
