@@ -8,7 +8,6 @@ os.system("pip install requests transformers")
 from textblob import TextBlob
 
 import requests
-import getpass
 
 # Class Bias
 class ClassBiased(ABC):
@@ -84,55 +83,60 @@ class PolarityFactory:
 
 # Class Fake News
 class FakeNews(ABC):
-    @abstractmethod
-    def determine_fake(self):
-        pass
+   @abstractmethod
+   def determine_fake(self):
+       pass
+
 
 class Fake(FakeNews):
-    def determine_fake(self):
-        print("The API suspects this is Fake.")
+   def determine_fake(self):
+       print("The API suspects this is Fake.")
+
 
 class Real(FakeNews):
-    def determine_fake(self):
-        print("This text is neutral.")
+   def determine_fake(self):
+       print("The API suspects this is Real.")
+
 
 class FakeNewsFactory:
-    @staticmethod
-    def determine_fake(prediction):
-        if prediction == "Fake News":
-            return Fake()
-        elif prediction == "Not Fake News":
-            return Real()
-        else:
-            return None
+   @staticmethod
+   def determine_fake(prediction):
+       if prediction == "Fake News":
+           return Fake()
+       elif prediction == "Not Fake News":
+           return Real()
+       else:
+           return None
+
 
 # Class Ai-decision (API)
 
-API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
 
-key = input("Enter your Hugging Face API key: ")
+API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
+api_key = input("Enter your Hugging Face API key: ")
+
 
 def detect_fake_news(text):
-    response = requests.post(API_URL, headers=key, json={"inputs": text})
-    
-    if response.status_code == 200:
-        result = response.json()
-        print("Full API Response:", result)  
-        
-        prediction = result[0]
-        label = prediction[0]['label']  
-        score = prediction[0]['score']  
-        
-        print(f"Label: {label}, Score: {score}")  
-        
-        if label == "Fake":
-            return "Fake News"
-        elif label == "Real":
-            return "Not Fake News"
-        else:
-            return "Unknown Label"
-    else:
-        return f"Error: {response.status_code}, {response.text}"  
+   headers = {"Authorization": f"Bearer {api_key}"}
+   response = requests.post(API_URL, headers=headers, json={"inputs": text})
+
+
+   if response.status_code == 200:
+       result = response.json()
+
+
+       if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
+           prediction = result[0][0]
+           label = prediction.get('label', 'Unknown').lower()  # Convert to lowercase
+
+
+           if label == "fake":
+               return "Fake News"
+           elif label == "real":
+               return "Not Fake News"
+       return "Unknown Label"
+   else:
+       return f"API Error: {response.status_code}"
 
 # Textblob
 user_input = input("Enter text: ")
@@ -171,12 +175,11 @@ elif 0.333 <= polarity <= 1:
 
 # News
 if prediction == "Fake News":
-    determined_prediction = FakeNewsFactory.determine_fake("Fake")
+   determined_prediction = FakeNewsFactory.determine_fake("Fake News")
 elif prediction == "Not Fake News":
-    determined_prediction = FakeNewsFactory.determine_fake("Real")
-elif:
-    None
+   determined_prediction = FakeNewsFactory.determine_fake("Not Fake News")
 
 # Prints text related to bias and polarity given.
 determined_bias.determine_bias()
 determined_polarity.determine_polarity()
+determined_prediction.determine_fake()
