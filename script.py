@@ -9,6 +9,11 @@ from textblob import TextBlob
 
 import requests
 
+# Flask is used to create the html page
+from flask import Flask
+from flask import render_template
+
+app = Flask(__name__)
 
 # Class Bias
 class ClassBiased(ABC):
@@ -18,23 +23,23 @@ class ClassBiased(ABC):
 
 class ExBias(ClassBiased):
     def determine_bias(self):
-        print("This article seems to have an extreme bias")
+        return "This article seems to have an extreme bias"
 
 class HighBias(ClassBiased):
     def determine_bias(self):
-        print("This article seems to have a high bias")
+        return "This article seems to have a high bias"
 
 class ModerateBias(ClassBiased):
     def determine_bias(self):
-        print("This article seems to have a moderate bias")
+        return "This article seems to have a moderate bias"
 
 class LowBias(ClassBiased):
     def determine_bias(self):
-        print("This article seems to have a low bias")
+        return "This article seems to have a low bias"
         
 class ExLowBias(ClassBiased):
     def determine_bias(self):
-        print("This article seems to have an extremely low bias")
+        return "This article seems to have an extremely low bias"
 
 class BiasFactory:
     @staticmethod
@@ -61,15 +66,15 @@ class Polarity(ABC):
 
 class Positive(Polarity):
     def determine_polarity(self):
-        print("This text expresses positive attitudes toward the main idea.")
+        return "This text expresses positive attitudes toward the main idea."
 
 class Neutral(Polarity):
     def determine_polarity(self):
-        print("This text is neutral.")
+        return "This text is neutral."
 
 class Negative(Polarity):
     def determine_polarity(self):
-        print("This text expresses negative attitudes toward the main idea.")
+        return "This text expresses negative attitudes toward the main idea."
 
 class PolarityFactory:
     @staticmethod
@@ -92,11 +97,11 @@ class FakeNews(ABC):
 
 class Fake(FakeNews):
    def determine_fake(self):
-       print("The API suspects this is Fake.")
+       return "The API suspects this is Fake."
 
 class Real(FakeNews):
    def determine_fake(self):
-       print("The API suspects this is Real.")
+       return "The API suspects this is Real."
 
 class FakeNewsFactory:
    @staticmethod
@@ -173,3 +178,42 @@ elif prediction == "Not Fake News":
 determined_bias.determine_bias()
 determined_polarity.determine_polarity()
 determined_prediction.determine_fake()
+
+# Flask takes variables to place into html template
+@app.route('/')
+def index():
+    context = {
+    'bias': determined_bias.determine_bias(),
+    'polarity': determined_polarity.determine_polarity(),
+    'prediction': determined_prediction.determine_fake()
+    }
+
+    return render_template("index.html", **context)
+
+
+# UNIT TEST SUITE
+import sys
+
+def test(did_pass):
+    """ Print the result of a test. """
+    linenum = sys._getframe(1).f_lineno # Get the caller’s line number.
+    if did_pass:
+        msg = "Test at line {0} ok.".format(linenum)
+    else:
+        msg = ("Test at line {0} FAILED.".format(linenum))
+    print(msg)
+
+def test_suite():
+    # bias
+    test(ClassBiased("The moon landing was fake") == ClassBiased(ExBias))
+    test(user_input(123456789) == None)
+
+    # polarity
+    test(user_input("I love unicorns so much") == Positive)
+    test(user_input("The moon landing was fake") == Neutral)
+    test(user_input(123456789) == None)
+
+    # fake news
+    
+#test()
+test_suite()
