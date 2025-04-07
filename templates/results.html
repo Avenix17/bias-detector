@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Bias Detector</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+
+    <body>
+        <h1>Bias Detector</h1>
+
+        <div class="results">
+
+            <div class="bias_box">
+                <p>This is bias: {{ bias }}</p>
+            </div>
+
+            <div class="polar_box">
+                <p>This is polarity: {{ polarity }}</p>
+            </div>
+
+            <div class="predict_box">
+                <p>This is the AI: {{ prediction }}</p>
+            </div>
+
+        </div>
+        <br>
+        <div class="index_button">
+            <button><a href=" {{url_for('index') }}">Return to Main Page</a></button>
+        </div>
+
+    </body>
+
+    <footer>
+        Authors: Avyrie Fellows, Cierra Loepker, Melanie Jensen, Lydia Porter
+    </footer>
+</html>

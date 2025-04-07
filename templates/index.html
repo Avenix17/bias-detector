@@ -2,12 +2,30 @@
 <html lang="en">
     <head>
         <title>Bias Detector</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/style.css">
     </head>
 
     <body>
         <h1>Bias Detector</h1>
-        <p>This is an example: {{ bias }}</p>
-        <p>This is an example: {{ polarity }}</p>
-        <p>Ai example: {{ prediction }}</p>
+
+        <div class="welcome">
+            <p>This is where we can put our welcome information for users that inform them about how this website/application works.</p>
+        </div>
+
+        <br>
+
+        <div class="user_form">
+            <form method="POST" action="{{ url_for('results') }}">
+                <label for="user_input">Enter copied text for analysis:</label>
+                <input type="text-box" id="user_input" name="user_input"><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
     </body>
+
+    <footer>
+        Authors: Avyrie Fellows, Cierra Loepker, Melanie Jensen, Lydia Porter
+    </footer>
 </html>
