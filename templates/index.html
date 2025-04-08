@@ -18,14 +18,16 @@
         <div class="user_form">
             <form method="POST" action="{{ url_for('results') }}">
                 <label for="user_input">Enter copied text for analysis:</label>
-                <input type="text-box" id="user_input" name="user_input"><br>
-                <input type="submit" value="Submit">
+                <br>
+                <textarea name="user_input" id="user_input"></textarea>
+                <br>
+                <input type="submit" value="Submit" class="submit_button">
             </form>
         </div>
 
     </body>
 
     <footer>
-        Authors: Avyrie Fellows, Cierra Loepker, Melanie Jensen, Lydia Porter
+        <p>Authors: Avyrie Fellows, Cierra Loepker, Melanie Jensen, Lydia Porter</p>
     </footer>
 </html>

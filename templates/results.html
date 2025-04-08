@@ -12,20 +12,24 @@
         <div class="results">
 
             <div class="bias_box">
-                <p>This is bias: {{ bias }}</p>
+                <h2>Bias</h2>
+                <p>{{ bias }}</p>
             </div>
 
             <div class="polar_box">
-                <p>This is polarity: {{ polarity }}</p>
+                <h2>Polarity</h2>
+                <p>{{ polarity }}</p>
             </div>
 
             <div class="predict_box">
-                <p>This is the AI: {{ prediction }}</p>
+                <h2>AI Prediction</h2>
+                <p>{{ prediction }}</p>
+                <p>Warning about AI...</p>
             </div>
 
         </div>
         <br>
-        <div class="index_button">
+        <div class="return_button">
             <button><a href=" {{url_for('index') }}">Return to Main Page</a></button>
         </div>
 

@@ -1,17 +1,19 @@
 # Authors: Avyrie Fellows, Lydia Porter, Melanie Jensen, Cooper Gale, Cierra Loepker
 
-# imports
+# Imports
+# Imports for classes
 from abc import ABC, abstractmethod
 import os
 
+# Imports for Textblob (sensitivity and polarity analysis)
 os.system("pip install requests transformers")
 from textblob import TextBlob
 
+# Import for API Access
 import requests
 
 # Flask is used to create the html page
 from flask import Flask, render_template, request
-
 app = Flask(__name__)
 
 # Class Bias
@@ -20,26 +22,32 @@ class ClassBiased(ABC):
     def determine_bias(self):
         pass
 
+# Class ExBias inherits from Class Biased
 class ExBias(ClassBiased):
     def determine_bias(self):
-        return "This article seems to have an extreme bias"
+        return "Extreme Bias Detected: The text appears to be highly opinionated, indicating that there may be little to no factual basis. This indicates that the text may be strongly subjective, reflecting personal beliefs or persuasive rhetoric."
 
+# Class HighBias inherits from Class Biased
 class HighBias(ClassBiased):
     def determine_bias(self):
-        return "This article seems to have a high bias"
+        return "High Bias Detected: The text appears to be mostly subjective, but may still contain some factual elements. This indicates that the text may contain opinion-driven arguments or interpretations."
 
+# Class ModerateBias inherits from Class Biased
 class ModerateBias(ClassBiased):
     def determine_bias(self):
-        return "This article seems to have a moderate bias"
+        return "Moderate Bias Detected: he text appears to have a balanced mix of subjective and objective language. This indicates that the text appears to include opinions as well as factual content."
 
+# Class LowBias inherits from Class Biased
 class LowBias(ClassBiased):
     def determine_bias(self):
-        return "This article seems to have a low bias"
+        return "Low Bias Detected: The text appears to be mostly objective, with minor subjective elements. This indicates that the text focuses on facts but may include slight opinions or interpretations."
         
+# Class ExLowBias inherits from Class Biased
 class ExLowBias(ClassBiased):
     def determine_bias(self):
-        return "This article seems to have an extremely low bias"
+        return "Extremely Low Bias Detected: The text appears to be highly objective, indicating that it is almost entirely based on factual statements with minimal or no subjectivity."
 
+# Class Factory BiasFactory
 class BiasFactory:
     @staticmethod
     def determine_bias(bias):
@@ -63,18 +71,22 @@ class Polarity(ABC):
     def determine_polarity(self):
         pass
 
+# Class Positive inherits from Class Polarity
 class Positive(Polarity):
     def determine_polarity(self):
-        return "This text expresses positive attitudes toward the main idea."
+        return "Positive Polarity Detected: The text appears to express an overall positive sentiment, indicating that the overall connotation of words and phrases shows optimism, approval, or favorable opinions."
 
+# Class Neutral inherits from Class Polarity
 class Neutral(Polarity):
     def determine_polarity(self):
-        return "This text is neutral."
+        return "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral."
 
+# Class Negative inherits from Class Polarity
 class Negative(Polarity):
     def determine_polarity(self):
-        return "This text expresses negative attitudes toward the main idea."
+        return "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions."
 
+# Class Factory PolarityFactory
 class PolarityFactory:
     @staticmethod
     def determine_polarity(polarity):
@@ -94,14 +106,21 @@ class FakeNews(ABC):
    def determine_fake(self):
        pass
 
+# Class Fake inherits from Class FakeNews
 class Fake(FakeNews):
    def determine_fake(self):
-       return "The API suspects this is Fake."
+       return "AI detected 'Fake' News: The AI model classifies the input as likely false or misleading, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output."
 
+# Class Real inherits from Class FakeNews
 class Real(FakeNews):
    def determine_fake(self):
-       return "The API suspects this is Real."
+       return "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output."
 
+class Unknown(FakeNews):
+    def determine_fake(self):
+        return "AI was unable to understand the input."
+
+# Class Factory FakeNewsFactory
 class FakeNewsFactory:
    @staticmethod
    def determine_fake(prediction):
@@ -109,15 +128,18 @@ class FakeNewsFactory:
            return Fake()
        elif prediction == "Not Fake News":
            return Real()
+       elif prediction == "Unknown Label":
+           return Unknown()
        else:
            return None
 
 
 # Class Ai-decision (API)
-
+# API key and location:
 API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
 api_key = input("Enter your Hugging Face API key: ")
 
+# Method to use the API to output if the blackbox model predicts fake/not fake news
 def detect_fake_news(text):
    headers = {"Authorization": f"Bearer {api_key}"}
    response = requests.post(API_URL, headers=headers, json={"inputs": text})
@@ -139,13 +161,7 @@ def detect_fake_news(text):
 
 
 # Method/class calls
-# blob = TextBlob(user_input)
-# blob.sentiment
-# bias = blob.sentiment.subjectivity # Number for Subjectivity (Bias)
-# polarity = blob.sentiment.polarity # Number for Polarity (+/-)
-# prediction = detect_fake_news(user_input)
-
-
+# Analysis Method to determine the bias, subjectivity, and AI prediction
 def analysis(input):
     blob = TextBlob(input)
     blob.sentiment
@@ -179,21 +195,27 @@ def analysis(input):
         determined_prediction = FakeNewsFactory.determine_fake("Fake News")
     elif prediction == "Not Fake News":
         determined_prediction = FakeNewsFactory.determine_fake("Not Fake News")
+    elif prediction == "Unknown Label":
+        determined_prediction = FakeNewsFactory.determine_fake("Unknown Label")
 
 
-    return determined_bias.determine_bias(), determined_polarity.determine_polarity(), determined_prediction.determine_fake()
+    return [determined_bias.determine_bias(), determined_polarity.determine_polarity(), determined_prediction.determine_fake()]
 
-
+# Routes to index.html (homepage)
 @app.route('/')
 def index():
     return render_template("index.html")
 
+# Routes to results.html upoon user input
+# Uses analysis() to create output for results.html
 @app.route('/results', methods=['POST'])
 def results():
 
     if request.method == 'POST':
         user_input = request.form['user_input']
-        bias, polarity, prediction = analysis(user_input)
+        bias = analysis(user_input)[0]
+        polarity = analysis(user_input)[1]
+        prediction = analysis(user_input)[2]
 
     context = {
     'bias': bias,
@@ -202,31 +224,3 @@ def results():
     }
 
     return render_template("results.html", **context)
-
-
-# UNIT TEST SUITE
-# import sys
-
-# def test(did_pass):
-#     """ Print the result of a test. """
-#     linenum = sys._getframe(1).f_lineno # Get the caller’s line number.
-#     if did_pass:
-#         msg = "Test at line {0} ok.".format(linenum)
-#     else:
-#         msg = ("Test at line {0} FAILED.".format(linenum))
-#     print(msg)
-
-# def test_suite():
-#     # bias
-#     test(ClassBiased("The moon landing was fake") == ClassBiased(ExBias))
-#     test(user_input(123456789) == None)
-
-#     # polarity
-#     test(user_input("I love unicorns so much") == Positive)
-#     test(user_input("The moon landing was fake") == Neutral)
-#     test(user_input(123456789) == None)
-
-#     # fake news
-    
-# #test()
-# test_suite()

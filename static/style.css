@@ -1,14 +1,67 @@
 /* Styling for all */
 /* * {
-
+    border: 1px;
+    border-style: dashed;
 } */
+
+/* CSS Reset */
+body, header, form, footer {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 
 /* Styling for body */
 body {
     background-color: lightgray;
 }
 
+h1 {
+    text-align: center;
+    color: rgb(146, 12, 12);
+}
+
+.welcome {
+    text-align: center;
+}
+
+form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 50%;
+    margin-left: 25%;
+}
+
+label {
+    font-weight: bold;
+}
+
+#user_input {
+    height: 200px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+input {
+    width: 50%;
+    text-align: center;
+    margin-left: 25%;
+}
+
+input:hover {
+    background-color: chocolate;
+}
+
 /* Styling for footer */
 footer {
     background-color: gray;
+    position: fixed;
+    height: 5%;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    text-align: center;
 }
