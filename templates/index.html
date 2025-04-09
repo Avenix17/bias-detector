@@ -19,7 +19,7 @@
             <form method="POST" action="{{ url_for('results') }}">
                 <label for="user_input">Enter copied text for analysis:</label>
                 <br>
-                <textarea name="user_input" id="user_input"></textarea>
+                <textarea name="user_input" id="user_input" maxlength="512"></textarea>
                 <br>
                 <input type="submit" value="Submit" class="submit_button">
             </form>
