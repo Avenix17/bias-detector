@@ -12,6 +12,9 @@ from textblob import TextBlob
 # Import for API Access
 import requests
 
+# Import for DeepSeek
+from llama_cpp import Llama
+
 # Flask is used to create the html page
 from flask import Flask, render_template, request
 app = Flask(__name__)
@@ -116,10 +119,6 @@ class Real(FakeNews):
    def determine_fake(self):
        return "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output."
 
-class Unknown(FakeNews):
-    def determine_fake(self):
-        return "AI was unable to understand the input."
-
 # Class Factory FakeNewsFactory
 class FakeNewsFactory:
    @staticmethod
@@ -128,37 +127,46 @@ class FakeNewsFactory:
            return Fake()
        elif prediction == "Not Fake News":
            return Real()
-       elif prediction == "Unknown Label":
-           return Unknown()
        else:
            return None
 
 
-# Class Ai-decision (API)
-# API key and location:
-API_URL = "https://api-inference.huggingface.co/models/roberta-base-openai-detector"
-api_key = input("Enter your Hugging Face API key: ")
+# DeepSeek Model
 
-# Method to use the API to output if the blackbox model predicts fake/not fake news
-def detect_fake_news(text):
-   headers = {"Authorization": f"Bearer {api_key}"}
-   response = requests.post(API_URL, headers=headers, json={"inputs": text})
+llm = Llama.from_pretrained(
+    repo_id="mradermacher/DeepSeekFakeNews-LLM-7B-Chat-GGUF",
+    filename="DeepSeekFakeNews-LLM-7B-Chat.IQ4_XS.gguf",
+    verbose=False  
+)
 
-   if response.status_code == 200:
-       result = response.json()
+# DeepSeek Method to detect fake/not fake news
 
-       if isinstance(result, list) and len(result) > 0 and isinstance(result[0], list):
-           prediction = result[0][0]
-           label = prediction.get('label', 'Unknown').lower()  # Convert to lowercase
+class FakeNewsDetector:
+    def __init__(self, llm):
+        self.llm = llm
 
-           if label == "fake":
-               return "Fake News"
-           elif label == "real":
-               return "Not Fake News"
-       return "Unknown Label"
-   else:
-       return f"API Error: {response.status_code}"
+    def create_prompt(self, user_input):
+        return f"""[INST] Is the following news article real or fake?
 
+"{user_input}"
+
+Respond with either "Fake News" or "Not Fake News". [/INST]"""
+
+    def classify(self, user_input):
+        prompt = self.create_prompt(user_input)
+        output = self.llm(prompt, max_tokens=100, stop=["</s>"])
+        reply = output['choices'][0]['text'].strip()
+        return self.interpret(reply)
+
+    def interpret(self, reply):
+        # Optional: normalize and map output to consistent label
+        reply_lower = reply.lower()
+        if "fake" in reply_lower:
+            return "Fake News"
+        elif "not fake" in reply_lower or "real" in reply_lower:
+            return "Not Fake News"
+        else:
+            return f"Uncertain: {reply}"
 
 # Method/class calls
 # Analysis Method to determine the bias, subjectivity, and AI prediction
@@ -167,27 +175,28 @@ def analysis(input):
     blob.sentiment
     bias = blob.sentiment.subjectivity # Number for Subjectivity (Bias)
     polarity = blob.sentiment.polarity # Number for Polarity (+/-)
-    prediction = detect_fake_news(input)
+    detector = FakeNewsDetector(llm) # object for the AI Model
+    prediction = detector.classify(input) # Fake News Output (Fake News / Not Fake News)
 
     # if statements for bias/polarity/news
     # Bias
     if 0 <= bias < .2:
         determined_bias = BiasFactory.determine_bias("ExLowBias")
-    elif .2 <= bias < .4:
+    elif bias < .4:
         determined_bias = BiasFactory.determine_bias("LowBias")
-    elif .4 <= bias < .6:
+    elif bias < .6:
         determined_bias = BiasFactory.determine_bias("ModerateBias")
-    elif .6 <= bias < .8:
+    elif bias < .8:
         determined_bias = BiasFactory.determine_bias("HighBias")
-    elif .8 <= bias <= 1:
+    elif bias <= 1:
         determined_bias = BiasFactory.determine_bias("ExBias")
 
     # Polarity
     if -1 <= polarity < -0.333:
         determined_polarity = PolarityFactory.determine_polarity("Negative")
-    elif -0.333 <= polarity < 0.333:
+    elif polarity < 0.333:
         determined_polarity = PolarityFactory.determine_polarity("Neutral")
-    elif 0.333 <= polarity <= 1:
+    elif polarity <= 1:
         determined_polarity = PolarityFactory.determine_polarity("Positive")
 
     # News
@@ -195,8 +204,6 @@ def analysis(input):
         determined_prediction = FakeNewsFactory.determine_fake("Fake News")
     elif prediction == "Not Fake News":
         determined_prediction = FakeNewsFactory.determine_fake("Not Fake News")
-    elif prediction == "Unknown Label":
-        determined_prediction = FakeNewsFactory.determine_fake("Unknown Label")
 
 
     return [determined_bias.determine_bias(), determined_polarity.determine_polarity(), determined_prediction.determine_fake()]
@@ -224,3 +231,9 @@ def results():
     }
 
     return render_template("results.html", **context)
+
+
+# !pip install llama-cpp-python
+# pip install cmake
+# cmake -G "NMake Makefiles"
+# nmake -v

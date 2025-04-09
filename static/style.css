@@ -1,13 +1,14 @@
 /* Styling for all */
-/* * {
+* {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     border: 1px;
     border-style: dashed;
-} */
+}
 
 /* CSS Reset */
 body, header, form, footer {
-    margin: 0;
-    padding: 0;
+    margin: 100;
+    padding: 25;
     border: 0;
 }
 
@@ -15,11 +16,14 @@ body, header, form, footer {
 /* Styling for body */
 body {
     background-color: lightgray;
+    margin: 100;
+    padding: 25
 }
 
 h1 {
     text-align: center;
-    color: rgb(146, 12, 12);
+    font-size: 96;
+    color: #FF0000;
 }
 
 .welcome {
@@ -52,16 +56,44 @@ input {
 }
 
 input:hover {
-    background-color: chocolate;
+    background-color: #FF0000;
 }
 
 /* Styling for footer */
 footer {
     background-color: gray;
     position: fixed;
-    height: 5%;
+    height: 10%;
     width: 100%;
-    left: 0;
-    bottom: 0;
-    text-align: center;
+    left: 100;
+    bottom: 100;
+    text-align: right;
+    column-count: 2;
+    column-gap: 25;
+    column-fill: balance;
+}
+
+#authors {
+    color: #FF0000;
+    font-size: 24;
+}
+
+#bias {
+    color: #FF0000;
+    font-size: 48;
+}
+
+#polarity {
+    color: #FF0000;
+    font-size: 48;
+}
+
+#AIPredic {
+    color: #FF0000;
+    font-size: 48;
+}
+
+#warning {
+    color: #0800FF;
+    font-size: 36;
 }

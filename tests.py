@@ -1,7 +1,5 @@
-import pytest
 # grabs analysis method from script.py to unit test
-from script import analysis, ClassBiased, ExBias, Positive, Neutral, Negative, Polarity, HighBias, LowBias, ModerateBias, ExLowBias
-
+from script import analysis
 # UNIT TEST SUITE
 import sys
 
@@ -23,12 +21,14 @@ def test_suite():
      test(analysis("I like spring.")[0] == "Extremely Low Bias Detected: The text appears to be highly objective, indicating that it is almost entirely based on factual statements with minimal or no subjectivity.")
      test(analysis("1 + 1 = 2")[0] == "Extremely Low Bias Detected: The text appears to be highly objective, indicating that it is almost entirely based on factual statements with minimal or no subjectivity.")
      test(analysis("123456789")[0] == "Extremely Low Bias Detected: The text appears to be highly objective, indicating that it is almost entirely based on factual statements with minimal or no subjectivity.")
+     test(analysis("Fall is the best season")[0] == "Low Bias Detected: The text appears to be mostly objective, with minor subjective elements. This indicates that the text focuses on facts but may include slight opinions or interpretations.")
 
      # polarity
-     test(analysis("I love unicorns so much")[1] == Positive.determine_polarity())
-     test(analysis("The moon landing was fake")[1] == Neutral.determine_polarity())
-     test(analysis("Watching reality TV is a complete waste of time.")[1] == Negative.determine_polarity())
-     test(analysis("123456789") == None)
+     test(analysis("I love unicorns so much")[1] == "Positive Polarity Detected: The text appears to express an overall positive sentiment, indicating that the overall connotation of words and phrases shows optimism, approval, or favorable opinions.")
+     test(analysis("The moon landing was fake")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
+     test(analysis("Watching reality TV is a complete waste of time.")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
+     test(analysis("Donald duck is the worst disney character ever")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
+     test(analysis("I'm going to fist fight ai in the back of a Denny's")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
 
      # fake news
     
