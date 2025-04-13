@@ -12,6 +12,7 @@ def test(did_pass):
          msg = ("Test at line {0} FAILED.".format(linenum))
      print(msg)
 
+
 def test_suite():
      # bias
      test(analysis("The moon landing was fake.")[0] == "Extreme Bias Detected: The text appears to be highly opinionated, indicating that there may be little to no factual basis. This indicates that the text may be strongly subjective, reflecting personal beliefs or persuasive rhetoric.")
@@ -25,12 +26,23 @@ def test_suite():
 
      # polarity
      test(analysis("I love unicorns so much")[1] == "Positive Polarity Detected: The text appears to express an overall positive sentiment, indicating that the overall connotation of words and phrases shows optimism, approval, or favorable opinions.")
-     test(analysis("The moon landing was fake")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
-     test(analysis("Watching reality TV is a complete waste of time.")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
+     test(analysis("The moon landing was fake")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
+     test(analysis("Watching reality TV is a complete waste of time.")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
      test(analysis("Donald duck is the worst disney character ever")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
      test(analysis("I'm going to fist fight ai in the back of a Denny's")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
+     test(analysis("This is completely depressing.")[1] == "Negative Polarity Detected: The text appears to express an overall negative sentiment, indicating that the overall connotation of words and phrases shows criticism, disapproval, or unfavorable opinions.")
+     test(analysis("I'm so proud of what I’ve accomplished.")[1] == "Positive Polarity Detected: The text appears to express an overall positive sentiment, indicating that the overall connotation of words and phrases shows optimism, approval, or favorable opinions.")
+     test(analysis("I have lunch on the moon.")[1] == "Neutral Polarity Detected: The text does not appear to strongly express positive or negative sentiment. This indicates that text may be factual, balanced, or emotionally neutral.")
 
      # fake news
+     test(analysis("Nathan Barker teaches at Southern Utah University.")[2] == "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("The moon landing was fake.")[2] == "AI detected 'Fake' News: The AI model classifies the input as likely false or misleading, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("Cats are the best animal.")[2] == "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("Aliens control the stock market.")[2] == "AI detected 'Fake' News: The AI model classifies the input as likely false or misleading, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("The human body has 206 bones.")[2] == "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("COVID-19 is caused by eating spicy food.")[2] == "AI detected 'Fake' News: The AI model classifies the input as likely false or misleading, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("The moon affects tides on Earth.")[2] == "AI detected 'Real' News: The AI model classifies the input as likely factual or trustworthy, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
+     test(analysis("Dinosaurs built the pyramids.")[2] == "AI detected 'Fake' News: The AI model classifies the input as likely false or misleading, but the reasoning behind this decision is unknown to us. As the model's criteria are not transparent, the accuracy and reliability of this label cannot be verified. This label should not be taken as definitive proof of accuracy, so please verify the credibility of this output.")
     
 #test() 
 test_suite()

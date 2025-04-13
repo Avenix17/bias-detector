@@ -132,7 +132,6 @@ class FakeNewsFactory:
 
 
 # DeepSeek Model
-
 llm = Llama.from_pretrained(
     repo_id="mradermacher/DeepSeekFakeNews-LLM-7B-Chat-GGUF",
     filename="DeepSeekFakeNews-LLM-7B-Chat.IQ4_XS.gguf",
@@ -140,33 +139,57 @@ llm = Llama.from_pretrained(
 )
 
 # DeepSeek Method to detect fake/not fake news
-
 class FakeNewsDetector:
     def __init__(self, llm):
         self.llm = llm
 
+    # Trains AI to answer the way the application needs
     def create_prompt(self, user_input):
-        return f"""[INST] Is the following news article real or fake?
+        return f"""
+        Classify each of the following statements as either "Fake News" or "Not Fake News".
 
-"{user_input}"
+        Example 1:
+        "The moon is made of cheese."
+        Answer: Fake News
 
-Respond with either "Fake News" or "Not Fake News". [/INST]"""
+        Example 2:
+        "Water boils at 100 degrees Celsius at sea level."
+        Answer: Not Fake News
+
+        Example 3:
+        "5G towers caused the pandemic."
+        Answer: Fake News
+
+        Example 4:
+        "The Earth is round."
+        Answer: Not Fake News
+
+        Now classify the following:
+        "{user_input}"
+        Answer:"""
+
 
     def classify(self, user_input):
         prompt = self.create_prompt(user_input)
-        output = self.llm(prompt, max_tokens=100, stop=["</s>"])
+        output = self.llm(prompt, max_tokens=10, temperature=0.3, stop=["\n"])
         reply = output['choices'][0]['text'].strip()
+        print("🔍 Raw model response:", repr(reply))  # For debugging
         return self.interpret(reply)
 
     def interpret(self, reply):
-        # Optional: normalize and map output to consistent label
-        reply_lower = reply.lower()
-        if "fake" in reply_lower:
-            return "Fake News"
-        elif "not fake" in reply_lower or "real" in reply_lower:
+        normalized = reply.lower().strip()
+
+        if "not fake news" in normalized:
             return "Not Fake News"
+        elif normalized in ["not fake", "real", "true"]:
+            return "Not Fake News"
+        elif "fake news" in normalized:
+            return "Fake News"
+        elif normalized in ["fake"]:
+            return "Fake News"
         else:
             return f"Uncertain: {reply}"
+
 
 # Method/class calls
 # Analysis Method to determine the bias, subjectivity, and AI prediction
@@ -231,9 +254,3 @@ def results():
     }
 
     return render_template("results.html", **context)
-
-
-# !pip install llama-cpp-python
-# pip install cmake
-# cmake -G "NMake Makefiles"
-# nmake -v

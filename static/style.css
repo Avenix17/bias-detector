@@ -1,19 +1,19 @@
 /* Styling for all */
 * {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    border: 1px;
-    border-style: dashed;
+    /* border: 1px;
+    border-style: dashed; */
 }
 
 /* CSS Reset */
 body, header, form, footer {
-    margin: 100;
-    padding: 25;
+    margin: 0;
+    padding: 0;
     border: 0;
 }
 
 
-/* Styling for body */
+/* Styling for body on both html pages*/
 body {
     background-color: lightgray;
     margin: 100;
@@ -28,8 +28,11 @@ h1 {
 
 .welcome {
     text-align: center;
+    width: 80%;
+    margin-left: 10%;
 }
 
+/* CSS for index.html */
 form {
     text-align: center;
     display: flex;
@@ -63,37 +66,69 @@ input:hover {
 footer {
     background-color: gray;
     position: fixed;
-    height: 10%;
+    text-align: center;
+    color: black;
+    height: 5%;
     width: 100%;
-    left: 100;
-    bottom: 100;
-    text-align: right;
-    column-count: 2;
-    column-gap: 25;
-    column-fill: balance;
+    left: 0;
+    bottom: 0;
+    text-align: center;
 }
 
-#authors {
-    color: #FF0000;
-    font-size: 24;
+/* CSS for results.html */
+.results {
+    width: 80%;
+    margin-left: 10%;
 }
 
-#bias {
-    color: #FF0000;
-    font-size: 48;
+.return_button {
+    margin-left: 45%;
+    color: gray;
 }
 
-#polarity {
-    color: #FF0000;
-    font-size: 48;
+button:hover {
+    background-color:#FF0000;
 }
 
-#AIPredic {
-    color: #FF0000;
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    color: black;
+}
+
+h2 {
     font-size: 48;
 }
 
 #warning {
     color: #0800FF;
     font-size: 36;
+}
+
+.bias_box {
+    border: black;
+    border-style: solid;
+    border-width: 1px;
+    margin-bottom: 4px;
+}
+
+.polar_box {
+    border: black;
+    border-style: solid;
+    border-width: 1px;
+    margin-bottom: 4px;
+}
+
+.predict_box {
+    border: black;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.return_text {
+    padding-left: 5px;
+    padding-right: 5px;
 }

@@ -12,19 +12,28 @@
         <div class="results">
 
             <div class="bias_box">
-                <h2 id="bias">Bias</h2>
-                <p>{{ bias }}</p>
+                <div class="return_text">
+                    <h2>Bias:</h2>
+                    <p>{{ bias }}</p>
+                </div>
             </div>
 
             <div class="polar_box">
-                <h2 id="polatiry">Polarity</h2>
-                <p>{{ polarity }}</p>
+                <div class="return_text">
+                    <h2>Polarity:</h2>
+                    <p>{{ polarity }}</p>
+                </div>
             </div>
 
             <div class="predict_box">
-                <h2 id="AIPredic">AI Prediction</h2>
-                <p>{{ prediction }}</p>
-                <p id="warning">Warning about AI...</p>
+                <div class="return_text">
+                    <h2>AI Prediction:</h2>
+                    <p>{{ prediction }}</p>
+                </div>
+            </div>
+
+            <div class="warning_box">
+                <p id="warning">DISCLAIMER: The “fake news” detection is performed by an AI machine that we did not train. As a result, we cannot verify its accuracy. Please consider other sources and viewpoints while forming opinions and coming to conclusions.</p>
             </div>
 
         </div>
