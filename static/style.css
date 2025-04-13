@@ -43,6 +43,11 @@ form {
     margin-left: 25%;
 }
 
+form p {
+    font-style: italic;
+    font-size: small;
+}
+
 label {
     font-weight: bold;
 }
